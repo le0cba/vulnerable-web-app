@@ -17,9 +17,8 @@ jobs:
           heroku_email: "leonardo.baty@gmail.com"
           remote_branch: "master"
           usedocker: true
-
-
- SonarCloud:
+  
+  SonarCloud:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
