@@ -1,5 +1,4 @@
-name: Deploy Vulnerable Application                                  # workflow name
-
+name: Deploy WebApp                               # workflow name
 on:
   push:
     branches:
