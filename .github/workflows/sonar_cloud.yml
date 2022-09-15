@@ -1,0 +1,24 @@
+name: sonar_cloud
+on: 
+  push:
+    branches:
+      - master
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+        with:
+          projectBaseDir: . 
+          args: >
+            -Dsonar.projectKey=${{secrets.SONAR_PROJECT_KEY}}
+            -Dsonar.organization=${{secrets.SONAR_ORGANIZATION}}  
+            -Dsonar.source=. 
+            -Dsonar.sourceEncoding=UTF-8 
