@@ -47,10 +47,12 @@ jobs:
 
       - name: anchore_scan
         uses: anchore/scan-action@v3
+        continue-on-error: true
         id: scan
         with:
           image: anchore-image:${{ github.sha }}
-          #severity-cutoff: high
+          fail-build: false
+          severity-cutoff: high
           acs-report-enable: true          
 
       - name: Upload SARIF File
