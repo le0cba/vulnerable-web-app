@@ -5,41 +5,10 @@ on:
       - master
   pull_request:
     branches: [master]
-jobs:
-  snyk_docker:
-    name: snyk_docker_scan
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@master
-
-    - name: Docker Build 
-      run: |
-          docker build -t image-snyk:${{ github.sha }} .   
-      
-    - name: Run Snyk to check Docker image for vulnerabilities
-      # Snyk can be used to break the build when it detects vulnerabilities.
-      # In this case we want to upload the issues to GitHub Code Scanning
-      uses: snyk/actions/docker@master
-      continue-on-error: true      
-      env:
-        # In order to use the Snyk Action you will need to have a Snyk API token.
-        # More details in https://github.com/snyk/actions#getting-your-snyk-token
-        # or you can signup for free at https://snyk.io/login
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: image-snyk:${{ github.sha }}
-        args: >
-          --file=Dockerfile
-          --severity-threshold=high
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: snyk.sarif
+jobs: 
   snyk_scan_code:
-    name: synk_scan
+    name: Snyk Code
     runs-on: ubuntu-latest
-    #needs: snyk_docker
     steps:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
@@ -47,17 +16,39 @@ jobs:
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with: 
+        with:
           args: >
-            --severity-threshold=high        
-            
-            --sarif-file-output=synk_scan.sarif
-      - name: Upload SARIF File
+            --severity-threshold=high
+            --all-projects
+            --sarif-file-output=snyk-code.sarif
+      - name: Upload SARIF file
+        #if: always()
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: synk_scan.sarif
-     # - name: Upload SARIF File   --all-projects    
-     #   if: always()
-     #   uses: github/codeql-action/upload-sarif@v2
-     #   with:
-      #    sarif_file: ${{ steps.scan.outputs.sarif }}
+          sarif_file: snyk-code.sarif  
+
+  snyk_docker:
+    name: snyk_docker
+    runs-on: ubuntu-latest
+    needs: snyk_scan_code
+    steps:
+      ## Checkout is required since Snyk needs the Dockerfile for the Sarif report
+      - name: Checkout repository
+        uses: actions/checkout@master
+      - name: Docker Build
+        run: |
+          docker build -t image-snyk:${{ github.sha }} . 
+      - name: Snyk
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: image-snyk:${{ github.sha }}
+          args: >
+            --file=Dockerfile
+            --severity-threshold=high
+      - name: Upload SARIF file        
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
