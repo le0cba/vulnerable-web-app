@@ -51,11 +51,11 @@ jobs:
           args: >
             --severity-threshold=high        
             
-            --sarif-file-output=snyk.sarif
+            --sarif-file-output=synk_scan.sarif
       - name: Upload SARIF File
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk.sarif
+          sarif_file: synk_scan.sarif
      # - name: Upload SARIF File   --all-projects    
      #   if: always()
      #   uses: github/codeql-action/upload-sarif@v2
