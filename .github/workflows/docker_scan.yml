@@ -1,4 +1,4 @@
-name: docker
+name: docker_scan
 on: 
   push:
     branches:
@@ -50,7 +50,7 @@ jobs:
         id: scan
         with:
           image: anchore-image:${{ github.sha }}
-          severity-cutoff: high
+          #severity-cutoff: high
           acs-report-enable: true          
 
       - name: Upload SARIF File
