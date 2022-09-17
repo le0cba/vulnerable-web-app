@@ -62,3 +62,28 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Inspect action SARIF report
         run: cat ${{ steps.scan.outputs.sarif }}
+
+
+  checkov:
+    name: checkov
+    runs-on: ubuntu-latest
+    needs: trivy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        continue-on-error: true 
+        with:
+          directory: .
+          framework: all
+          quiet: true
+          soft_fail: true
+          download_external_modules: true
+          log_level: INFO # One of: INFO, WARNING, DEBUG
+          output_format: sarif
+      - name: Upload Sarif file
+        if: always()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
