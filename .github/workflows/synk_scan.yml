@@ -22,14 +22,11 @@ jobs:
         with: 
           args: >                 
             --sarif-file-output=synkscan.sarif
-      - name: Upload SARIF File
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload SARIF File as json
+        uses: actions/upload-artifact@v3
         with:
-          # Path to SARIF file relative to the root of the repository
-          sarif_file: synkscan.sarif
-          # Optional category for the results
-          # Used to differentiate multiple results for one commit
-          category: snyk_scan
+          name: synkscan
+          path: synkscan-config.json
 
   snyk_docker:
     name: snyk_docker
@@ -54,9 +51,9 @@ jobs:
           image: image-snyk:${{ github.sha }}
           args: >
             --file=Dockerfile
-       #     --severity-threshold=high
-      - name: Upload SARIF file        
-        uses: github/codeql-action/upload-sarif@v2
+            --severity-threshold=high
+      - name: Upload SARIF File as json
+        uses: actions/upload-artifact@v3
         with:
-          sarif_file: snyk.sarif
-          category: snyk_scan
+          name: snyk_docker
+          path: synkscan-docker-config.json
