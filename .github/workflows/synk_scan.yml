@@ -6,32 +6,9 @@ on:
   pull_request:
     branches: [master]
 jobs: 
-  snyk_scan_code:
-    name: Snyk Code
-    runs-on: ubuntu-latest
-    permissions:
-      # required for all workflows
-      security-events: write
-    steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with: 
-          args: >                 
-            --sarif-file-output=synkscan.sarif
-      - name: Upload SARIF File as json
-        uses: actions/upload-artifact@v3
-        with:
-          name: synkscan
-          path: synkscan-config.json
-
   snyk_docker:
     name: snyk_docker
     runs-on: ubuntu-latest
-    #needs: snyk_scan_code
     permissions:
       # required for all workflows
       security-events: write
@@ -57,3 +34,22 @@ jobs:
         with:
           name: snyk_docker
           path: synkscan-docker-config.json
+  snyk_scan_code:
+    name: Snyk Code
+    runs-on: ubuntu-latest
+    needs: snyk_docker
+    permissions:
+      # required for all workflows
+      security-events: write
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload SARIF File as json
+        uses: actions/upload-artifact@v3
+        with:
+          name: synkscan
+          path: synkscan-config.json
