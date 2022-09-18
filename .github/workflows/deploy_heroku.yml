@@ -11,6 +11,8 @@ on:
 jobs:
   sast_scan:
     uses: ./.github/workflows/sast_scan.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   deploy-heroku:
     name: Deploy Heroku
