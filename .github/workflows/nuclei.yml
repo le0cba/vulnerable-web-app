@@ -1,0 +1,32 @@
+name: Nuclei - DAST Scan
+
+on:
+    schedule:
+      - cron: '0 0 * * *'
+    workflow_dispatch:
+
+jobs:
+  nuclei-scan:
+    name: nuclei-scan2
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Nuclei - Scan
+        uses: projectdiscovery/nuclei-action@main
+        with:
+          target: https://leonardo-battistelli-devsecops.herokuapp.com/
+          flags: "-severity critical,high -stats"
+
+      - name: GitHub Workflow artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: nuclei.log
+          path: nuclei.log
+
+      - name: Upload SARIF File as json
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuclei-scan
+          path: nuclei-scan.json
+
