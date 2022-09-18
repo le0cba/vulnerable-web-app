@@ -32,9 +32,8 @@ jobs:
           ref: master
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.4.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+        with:          
           docker_name: 'owasp/zap2docker-stable'
-          target: 'https://www.zaproxy.org/'
+          target: 'https://leonardo-battistelli-devsecops.herokuapp.com/'
           rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
