@@ -1,6 +1,9 @@
 name: SAST_Scan
 on:
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
   
 jobs:
   gitleaks-scan:
