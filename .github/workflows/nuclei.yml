@@ -20,15 +20,20 @@ jobs:
           github-report: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: GitHub Workflow artifacts
-        uses: actions/upload-artifact@v2
+      # - name: GitHub Workflow artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: nuclei.log
+      #     path: nuclei.log
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
         with:
           name: nuclei.log
           path: nuclei.log
 
-      - name: Upload SARIF File as json
-        uses: actions/upload-artifact@v3
-        with:
-          name: nuclei-scan
-          path: nuclei-scan.json
 
+      # - name: GitHub Security Dashboard Alerts
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: nuclei.sarif
