@@ -1,10 +1,6 @@
-name: docker_scan
-on: 
-  push:
-    branches:
-      - master
-  pull_request:
-    branches: [master]
+name: SAST_Scan
+on:
+  workflow_call:
   
 jobs:
   gitleaks-scan:
