@@ -5,6 +5,10 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
+      SONAR_PROJECT_KEY:
+        required: true
+      SONAR_ORGANIZATION:
+        required: true
   push:
     branches: [master]   
 
@@ -13,6 +17,8 @@ jobs:
     uses: ./.github/workflows/sast_scan.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_PROJECT_KEY: ${{secrets.SONAR_PROJECT_KEY}}
+      SONAR_ORGANIZATION: ${{secrets.SONAR_ORGANIZATION}}
 
   deploy-heroku:
     name: Deploy Heroku
